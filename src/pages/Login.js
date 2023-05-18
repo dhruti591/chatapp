@@ -4,7 +4,7 @@ import { Link, useNavigate,  } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { registerRoute } from '../utils/APIRouters';
+import { loginRoute } from '../utils/APIRouters';
 
 const Login = () => {
 
@@ -12,9 +12,7 @@ const Login = () => {
 
   const [values, setValues] = useState({
     "username": "",
-    "email": "",
     "password": "",
-    "confirmPassword": "",
   })
   
   const toastOptions = {
@@ -26,32 +24,15 @@ const Login = () => {
   };
 
   const handleValidation = () => {
-    const { password, confirmPassword, username, email } = values;
-    // console.log(password+" " + confirmPassword+" " + username + email);
-    if (password !== confirmPassword) {
-      toast.error(
-        "password and confirm password should be same.",
-        toastOptions
-      );
+    const { password, username } = values;
+
+    if (username === "") {
+      toast.error("Email and Password is required.", toastOptions);
       return false;
-    } 
-     else if (username.length < 3) {
-      toast.error(
-        "Username should be greater than 3 characters.",
-        toastOptions
-      );
-      return false;
-    } else if (password.length < 8) {
-      toast.error(
-        "password should be equal or greater than 8 characters.",
-        toastOptions
-      );
-      return false;
-    } else if (email === "") {
-      toast.error("Email is required.", toastOptions);
+    } else if (password === "") {
+      toast.error("Email and Password is required.", toastOptions);
       return false;
     }
-
     return true;
   };
   const handleSubmit = async (e) => {
@@ -59,27 +40,24 @@ const Login = () => {
     // alert('form submission');
     if(handleValidation())
     {
-      console.log("validation", values);
-      const { password, confirmPassword, username, email } = values;
-      const {data} = await axios.post(registerRoute, {
+      // console.log("validation", values);
+      const { password, username } = values;
+      const {data} = await axios.post(loginRoute, {
         username: username,
-        email: email,
         password: password,
-        confirmPassword: confirmPassword,
       });
       
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       }
       if (data.status === true) {
-        console.log('create user');
+        console.log('login user');
         localStorage.setItem(
           process.env.REACT_APP_LOCALHOST_KEY,
           JSON.stringify(data.user)
-        );
-        navigate("/");
+          );
+          navigate("/setAvatar");
       }
-
     }
   };
 
@@ -107,30 +85,14 @@ const Login = () => {
           <input
           className='p-2 border-4 text-lg bg-transparent hover:bg-blue-700 text-white cursor-pointer outline-none rounded'
             style={{"borderColor":"#4e0eff"}}
-            type="email"
-            placeholder="Email"
-            name="email"
-            onChange={(e) => handleChange(e)}
-          />
-          <input
-          className='p-2 border-4 text-lg bg-transparent hover:bg-blue-700 text-white cursor-pointer outline-none rounded'
-            style={{"borderColor":"#4e0eff"}}
             type="password"
             placeholder="password"
             name="password"
             onChange={(e) => handleChange(e)}
           />
-          <input
-          className='p-2 border-4 text-lg bg-transparent hover:bg-blue-700 text-white cursor-pointer outline-none rounded'
-            style={{"borderColor":"#4e0eff"}}
-            type="password"
-            placeholder="Confirm Password"
-            name="confirmPassword"
-            onChange={(e) => handleChange(e)}
-          />
-          <button type="submit" className='px-4 py-2 bg-purple-700 text-white text-xl'>Create User</button>
+          <button type="submit" className='px-4 py-2 bg-purple-700 text-white text-xl'>Log in</button>
           <span className='text-white'>
-            Already have an account ? <Link to="/login" className='text-purple-500 text-xl'>Login.</Link>
+            want to create Account ? <Link to="/register" className='text-purple-500 text-xl'>Register.</Link>
           </span>
         </form>
     </div>
