@@ -67,7 +67,7 @@ const SetAvatar = () => {
     // console.log(res.data);
     const data = res.data.avatarUrls;
     setAvatars(data);
-    console.log(avatars);
+    // console.log(avatars);
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
