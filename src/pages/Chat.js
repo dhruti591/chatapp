@@ -52,7 +52,7 @@ const Chat = () => {
   return (
     <>
       <div class="h-screen w-screen flex flex-col justify-center gap-4 items-center bg-red-900">
-        <div className="h-4/5 bg-gray-600 w-4/5 bg-opacity-70 grid grid-cols-2 sm:grid-cols-3">
+        <div className="h-4/5 bg-gray-600 w-4/5 bg-opacity-70 grid grid-cols-2  sm:grid-cols-3">
             <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}  />
             {isLoded && currentChat === undefined ? (
             <Welcome currentUser={currentUser} />
