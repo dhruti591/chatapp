@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { allUsersRoute } from "../utils/APIRouters";
+import { allUsersRoute, host } from "../utils/APIRouters";
 import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
 import ChatContainer from "../components/ChatContainer";
@@ -31,12 +32,20 @@ const Chat = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (currentUser) {
+      WebSocket.current = io(host);
+      WebSocket.current.emit("add-user", currentUser._id);
+    }
+  }, [currentUser]);
+
+
   useEffectAsync(async () => {
     // console.log(currentUser);
     if (currentUser) {
       if (currentUser.isAvatarImageSet) {
         const res = await axios.get(allUsersRoute + `/${currentUser._id}`);
-        console.log(res.data);
+        // console.log(res.data);
         setContacts(res.data);
       } else {
         navigate("/setAvatar");
@@ -57,7 +66,7 @@ const Chat = () => {
             {isLoded && currentChat === undefined ? (
             <Welcome currentUser={currentUser} />
           ) : (
-            <ChatContainer currentChat={currentChat}  />
+            <ChatContainer currentChat={currentChat} currentUser={currentUser} socket={WebSocket}  />
           )}
         </div>
       </div>
